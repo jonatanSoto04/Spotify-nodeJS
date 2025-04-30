@@ -12,6 +12,6 @@ app.use(bodyParser.json());
 
 // configuracion de cabeceras http
 
-// Rutas Base
+// Rutas Base y con
 
 module.exports = app;

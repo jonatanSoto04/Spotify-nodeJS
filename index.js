@@ -3,6 +3,7 @@
 const mongoose= require('mongoose');
 const app = require('./app');
 const port = process.env.PORT || 3977;
+mongoose.Promise = global.Promise;//
 //conexion a bd
 mongoose.connect('mongodb://localhost:27017/spotify_node')
   .then(() => {
