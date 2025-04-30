@@ -6,12 +6,17 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
+//cargar rutas
+const user_routes = require('./routes/user');
+
 //configuracion de body parser
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
 // configuracion de cabeceras http
 
-// Rutas Base y con
+// Rutas Base
+app.use('/api', user_routes);
+
 
 module.exports = app;
