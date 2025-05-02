@@ -1,5 +1,5 @@
 'use strict'
-const jwt = require('jwt-simple'); //creacion del toke
+const jwt = require('jwt-simple'); //creacion del token
 const moment = require('moment'); //tiempo de duracion de token
 const secret = 'clave_secreta';
 
