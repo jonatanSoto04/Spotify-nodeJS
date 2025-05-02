@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 const AlbumSchema = Schema({
     title: String,
     description: String,
-    year: number,
+    year: Number,
     image: String,
     artist: {type: Schema.ObjectId, ref:'Artist'}//se guarda el id de un pbjeto que esta guardado
 });

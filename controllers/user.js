@@ -89,7 +89,7 @@ function updateUser(req, res) {
     const userId = req.params.id;
     const update = req.body;
 
-    User.findByIdAndUpdate(userId, update, { new: true })// devuelve el obje que se modifica
+    User.findByIdAndUpdate(userId, update, { new: true })// devuelve el objeto que se modifica
         .then(userUpdated => {
             if (!userUpdated) {
                 return res.status(404).send({ message: 'No se ha podido actualizar el usuario' });
