@@ -6,7 +6,7 @@ const md_auth = require('../middlewares/authenticated');
 
 const api = express.Router();
 
-const  multipart = require('connect-multiparty');
+const multipart = require('connect-multiparty');
 const md_upload = multipart({ uploadDir: './uploads/users'});
 
 api.get('/probando-controlador',md_auth.ensureAuth, UserController.pruebas);
