@@ -6,8 +6,6 @@ const mongoosePaginate = require('mongoose-pagination');
 const Artist = require('../models/artist');
 const Album = require('../models/album');
 const Song = require('../models/song');
-const album = require('../models/album');
-const artist = require('../models/artist');
 
 function getArtist(req, res) {
   const artistId = req.params.id;
