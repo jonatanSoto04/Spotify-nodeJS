@@ -141,7 +141,7 @@ function uploadImage(req, res){
 //Obtener imagen 
 function getImageFile(req, res){
     const imageFile = req.params.imageFile;
-    const path_file = './uploads/album/'+imageFile;
+    const path_file = './uploads/albums/'+imageFile;
     fs.exists(path_file, function(exists){
         if(exists){
             res.sendFile(path.resolve(path_file));
