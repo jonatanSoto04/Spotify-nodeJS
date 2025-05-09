@@ -17,7 +17,7 @@ function saveUser(req, res) {
     const params = req.body;
 
     user.name = params.name;
-    user.lastname = params.lastname;
+    user.lastName = params.lastName;
     user.email = params.email;
     user.role = 'ROLE_ADMIN';
     user.image = 'null';
@@ -26,7 +26,7 @@ function saveUser(req, res) {
         //encriptar contrseña y guardar datos
         bcrypt.hash(params.password, null, null, function (err, hash) {
             user.password = hash;
-            if (user.name != null && user.lastname != null && user.email != null) {
+            if (user.name != null && user.lastName != null && user.email != null) {
                 //guardar usuario
                 user.save()
                     .then(userStored => {
@@ -72,7 +72,7 @@ function loginUser(req, res) {
                             token: jwt.createToken(user)
                         });
                     } else {
-                        return res.status(200).send({ user });
+                        res.status(200).send({ user });
                     }
                 } else {
                     return res.status(404).send({ message: 'El usuario no ha podido loguearse' });
