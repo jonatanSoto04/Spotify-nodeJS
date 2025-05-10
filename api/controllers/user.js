@@ -89,6 +89,10 @@ function updateUser(req, res) {
     const userId = req.params.id;
     const update = req.body;
 
+    if(userId != req.user.sub){
+            return res.status(500).send({ message: 'No tienes permiso para actualizar este usuario' });
+    }
+
     User.findByIdAndUpdate(userId, update, { new: true })// devuelve el objeto que se modifica
         .then(userUpdated => {
             if (!userUpdated) {

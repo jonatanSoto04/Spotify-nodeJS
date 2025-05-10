@@ -1,15 +1,33 @@
 <div *ngIf="identity" class="navigation col-lg-1">
   <h1>{{title}}</h1>
-  <span>
-    {{identity.name}} {{identity.lastName}}
-  </span>
-  <span class="btn btn_warning" (click)="logout()">
-    Cerrar sesion
-  </span>
+  <nav id="navegation">
+    <a href="#">
+      <span class="glyphicon glyphicon-search" aria-hidden="true"> Buscar </span>
+    </a>
+    <a href="#">
+      <span class="glyphicon glyphicon-star" aria-hidden="true"> Artistas </span>
+    </a>
+    <a href="#">
+      <span class="glyphicon glyphicon-book" aria-hidden="true"> Albums </span>
+    </a>
+  </nav>
+
+  <nav id="user_logged">
+    <span id="identity_name">
+      {{identity.name}} {{identity.lastName}}
+    </span>
+    <span class="btn btn_warning" (click)="logout()">
+      Cerrar sesion
+    </span>
+    <a [routerLink]="['/mis-datos']">
+      <span class="glyphicon glyphicon-cog" aria-hidden="true">Mis datos</span>
+    </a>
+  </nav>
 </div>
 <div class="clearfix"></div>
 <div *ngIf="identity" class="central col-lg-11">
   <p>Estás logueado en la aplicación</p>
+  <router-outlet></router-outlet>
 </div>
 
 <div *ngIf="!identity" class="col-lg-12">
@@ -71,5 +89,3 @@
     </form>
   </div>
 </div>
-
-<router-outlet></router-outlet>

@@ -1,5 +1,5 @@
 import { Component, OnInit, ɵrestoreComponentResolutionQueue } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterModule, RouterOutlet } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { UserService } from './services/user.service'
 import { User } from './models/user';
@@ -11,18 +11,18 @@ import { response } from 'express';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [NgIf, RouterOutlet, FormsModule, HttpClientModule],
+  imports: [NgIf, RouterOutlet, FormsModule, HttpClientModule, RouterModule],
   providers: [UserService],
-  templateUrl: './app.component.html',
+  templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
   public title = 'cliente';
   public user: User;
   public user_register: User;
   public identity: User | null = null;
-  public token: string | null = null;
-  public errorMessage: string | null = null;
-  public alertRegister: string | null = null;
+  public token: String | null = null;
+  public errorMessage: String | null = null;
+  public alertRegister: String | null = null;
   constructor(
     private _userService: UserService
   ) {
