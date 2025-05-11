@@ -1,5 +1,4 @@
-<div class="col-lg-6" *ngIf="identity">
-    <hr>
+<div class="col-lg-6">
     <h1>{{titulo}}</h1>
 
     <div *ngIf="alertMessage">
@@ -27,12 +26,12 @@
             <span *ngIf="!email.valid && email.touched">El email es obligatorio</span>
         </p>
         <div class="image_for_edit" *ngIf="user.image && user.image != 'null'">
-            <img src="" alt="">
+            <img src="{{url + 'get-image-user/' + user.image}}" alt="" style="width: 50px;">
         </div>
 
         <p>
             <label for="" class="fw-bold fs-12"> Sube tu foto: </label>
-            <input type="file" placeholder="Subir imagen..">
+            <input type="file" placeholder="Subir imagen.." (change)="fileChangeEvent($event)">
         </p>
 
         <input type="submit" value="Actualizar mis datos" class="btn btn-primary" />

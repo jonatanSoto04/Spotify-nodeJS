@@ -5,6 +5,7 @@ import { NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule, RouterOutlet } from '@angular/router';
+import { GLOBAL } from '../services/global';
 
 @Component({
     standalone: true,
@@ -20,6 +21,7 @@ export class UserEditComponent implements OnInit {
     public identity: User | null = null;
     public token: string | null = null;
     public alertMessage: string | null = null;
+    public url:string;
 
     constructor(
         private _userService: UserService
@@ -29,6 +31,7 @@ export class UserEditComponent implements OnInit {
         // LocalStorage
         this.identity = this._userService.getIdentity();
         this.token = this._userService.getToken();
+        this.url = GLOBAL.url
         if (this.identity) {
             this.user = this.identity;
         } else {
@@ -49,6 +52,19 @@ export class UserEditComponent implements OnInit {
                     //this.user = response.user; 
                     localStorage.setItem('identity', JSON.stringify(this.user));
                     document.getElementById("identity_name")!.innerHTML = this.user.name;
+                    
+                    if(!this.filesToUpload){
+                        //redireccion
+                    }else{
+                        this.makeFileRequest(this.url+'upload-image-user/'+this.user._id, [], this.filesToUpload)
+                        .then(
+                            (result: any) => {
+                                this.user.image = result.image;
+                                localStorage.setItem('identity', JSON.stringify(this.user));
+                                let image_path = this.url + 'get-image-user/' + this.user.image;
+                                document.getElementById("image-logged")?.setAttribute('src', image_path);
+                            });
+                    }
                     this.alertMessage = 'El usuario se ha actualizado conrrectamente';
                 }
             },

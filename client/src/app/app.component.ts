@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { error } from 'console';
 import { response } from 'express';
+import { GLOBAL } from './services/global';
 
 @Component({
   selector: 'app-root',
@@ -23,12 +24,14 @@ export class AppComponent implements OnInit {
   public token: String | null = null;
   public errorMessage: String | null = null;
   public alertRegister: String | null = null;
+  public url: string;
+
   constructor(
     private _userService: UserService
   ) {
     this.user = new User('', '', '', '', '', 'ROLE_USER', '');
     this.user_register = new User('', '', '', '', '', 'ROLE_USER', '');
-
+    this.url = GLOBAL.url;
   }
 //crear sesion
   ngOnInit() {

@@ -1,6 +1,64 @@
 /* You can add global styles to this file, and also import other style files */
 @import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
-body {
-    background-color: #eaf5ff; // Gris claro de Bootstrap
-  }
+
+html ,body {
+  margin: 0px;
+  height: 100%;
+  background-color: #eaf5ff; // Gris claro de Bootstrap
+}
+
+.head-title{
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 25px;
+  display: block;
+}
+
+.navigation{
+  text-align: center;
+  color: white;
+  background: #1C1C1F;
+  height: 100%;
+}
+.navigation a{
+  color: #ddd;
+  padding-top: 20px;
+  margin-bottom: 20px;
+  display: block;
+  text-decoration: none;
+}
+.navigation .bi{
+  font-size: 25px;
+  display: block;
+  width: 100%;
+}
+.navigation a:hover{
+  color: white;
+}
+
+#user_logged{
+  background: #1C1C1F;
+  position: absolute;
+  bottom: 0px;
+  border-top: 1px solid #444;
+  width: 8.0%;
+}
+.image-logged{
+  background: #eee;
+  border-radius: 100px;
+  height: 57px;
+  width: 57px;
+  margin: 0px auto;
+  margin-top: 15px;
+  overflow: hidden;
+}
+
+#user_logged .user_image omg{
+  width: 57px;
+}
+
+.btn.-logout{
+  cursor: pointer;
+}
