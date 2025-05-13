@@ -1,12 +1,12 @@
 import { Component, OnInit, ɵrestoreComponentResolutionQueue } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
+import { Router, ActivatedRoute, Params } from "@angular/router";
+
 import { NgIf } from '@angular/common';
 import { UserService } from './services/user.service'
 import { User } from './models/user';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { error } from 'console';
-import { response } from 'express';
 import { GLOBAL } from './services/global';
 
 @Component({
@@ -27,13 +27,15 @@ export class AppComponent implements OnInit {
   public url: string;
 
   constructor(
+    private _route: ActivatedRoute,
+    private _router: Router,
     private _userService: UserService
   ) {
     this.user = new User('', '', '', '', '', 'ROLE_USER', '');
     this.user_register = new User('', '', '', '', '', 'ROLE_USER', '');
     this.url = GLOBAL.url;
   }
-//crear sesion
+  //crear sesion
   ngOnInit() {
     this.identity = this._userService.getIdentity();
     this.token = this._userService.getToken();
@@ -102,18 +104,18 @@ export class AppComponent implements OnInit {
     localStorage.clear;
     this.identity = null;
     this.token = null;
-
+    this._router.navigate(['/']);
   }
   //registrar nuevo usuario
-  onSubmitRegister(){
+  onSubmitRegister() {
     console.log(this.user_register);
     this._userService.register(this.user_register).subscribe(
       response => {
         let user = response.user;
         this.user_register = user;
-        if(!user._id){
+        if (!user._id) {
           this.alertRegister = 'Error al registrarse';
-        }else{
+        } else {
           this.alertRegister = 'El registro se ha realizado correctamente, identificate con ' + this.user_register.email;
           this.user_register = new User('', '', '', '', '', 'ROLE_USER', '');
         }

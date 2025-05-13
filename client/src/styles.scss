@@ -16,6 +16,11 @@ html ,body {
   display: block;
 }
 
+.actived{
+  border-bottom: 4px solid #848D00;
+  padding-bottom: 4px;
+}
+
 .navigation{
   text-align: center;
   color: white;
@@ -45,6 +50,7 @@ html ,body {
   border-top: 1px solid #444;
   width: 8.0%;
 }
+
 .image-logged{
   background: #eee;
   border-radius: 100px;
