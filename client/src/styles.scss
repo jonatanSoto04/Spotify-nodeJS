@@ -3,9 +3,15 @@
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
 
 html ,body {
-  margin: 0px;
+  margin: 0;
   height: 100%;
   background-color: #eaf5ff; // Gris claro de Bootstrap
+}
+
+.row{
+  margin: 0;
+  width: 100%;
+  display: flex;
 }
 
 .head-title{
@@ -21,11 +27,27 @@ html ,body {
   padding-bottom: 4px;
 }
 
+.central{
+  padding: 20px;
+  margin-left: 120px;
+  background: #eaf5ff;
+  overflow-y: auto;
+}
+
+.seguro{
+  margin-top: -33px;
+  background: #222326;
+  position: absolute;
+  height: 40px;
+}
+
 .navigation{
   text-align: center;
-  color: white;
+  padding-top: 15px;
   background: #1C1C1F;
-  height: 100%;
+  color: white;
+  width: 125px;
+  position: fixed;height: 100%;
 }
 .navigation a{
   color: #ddd;
@@ -48,7 +70,7 @@ html ,body {
   position: absolute;
   bottom: 0px;
   border-top: 1px solid #444;
-  width: 8.0%;
+  width: 80%;
 }
 
 .image-logged{
@@ -65,6 +87,75 @@ html ,body {
   width: 57px;
 }
 
-.btn.-logout{
+.page-link {
+  color: #1c1c1f;
+  border-color: #1c1c1f;
+  transition: background-color 0.3s ease;
+}
+
+.page-link:hover {
+  background-color: #1c1c1f;
+  color: white;
+}
+
+.btn-logout{
   cursor: pointer;
+}
+
+.artist_image_for_edit img{
+  width: 200px;
+}
+
+.artists-list{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.artist-item{
+  width: calc(25% - 20px);
+  margin: 0px;
+  padding: 0px;
+  height: 317px;
+  border: 1px solid #444;
+  margin-left: 20px;
+  margin-bottom: 30px;
+}
+
+.artist-item .artist-image{
+  height: 245px;
+  width: 100%;
+  overflow: hidden;
+  background: black;
+}
+
+.artist-item .artist-image img{
+  height: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.artist-item .artist-name{
+  color: white;
+  padding: 10px;
+  background: #222326;
+}
+
+.artist-item .artist-name a{
+  color: white;
+  text-decoration: none;
+}
+
+#artist-head-card .image{
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  float: left;
+  margin-right: 30px;
+}
+#artist-head-card .image img{
+  width: 150px;
 }

@@ -45,7 +45,7 @@ function saveArtist(req, res) {
 //obtener lista de artistas
 async function getArtists(req, res) {
   const page = req.params.page || 1;  // Si no viene page para entnoces que use 1
-  const itemsPerPage = 3;
+  const itemsPerPage = 4;
   try {
     const artists = await Artist.find().sort('name').skip((page - 1) * itemsPerPage).limit(itemsPerPage);
     const total = await Artist.countDocuments(); // dar ka suma total de documentos

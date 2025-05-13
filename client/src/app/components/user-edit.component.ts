@@ -22,6 +22,7 @@ export class UserEditComponent implements OnInit {
     public token: string | null = null;
     public alertMessage: string | null = null;
     public url:string;
+    public filesToUpload: Array<File> | null = null;
 
     constructor(
         private _userService: UserService
@@ -78,8 +79,6 @@ export class UserEditComponent implements OnInit {
             }
         );
     }
-
-    public filesToUpload: Array<File> | null = null;
 
     fileChangeEvent(fileInput: any) {
         this.filesToUpload = <Array<File>>fileInput.target.files;
