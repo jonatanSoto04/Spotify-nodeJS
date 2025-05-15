@@ -31,9 +31,10 @@ html ,body {
   padding: 20px;
   margin-left: 120px;
   background: #eaf5ff;
-  overflow-y: auto;
 }
-
+.data{
+  height: 195px;
+}
 .seguro{
   margin-top: -33px;
   background: #222326;
@@ -107,7 +108,8 @@ html ,body {
   width: 200px;
 }
 
-.artists-list{
+.artists-list,
+.albums-list{
   list-style: none;
   margin: 0;
   padding: 0;
@@ -116,7 +118,8 @@ html ,body {
   gap: 20px;
 }
 
-.artist-item{
+.artist-item,
+.album-item{
   width: calc(25% - 20px);
   margin: 0px;
   padding: 0px;
@@ -125,8 +128,12 @@ html ,body {
   margin-left: 20px;
   margin-bottom: 30px;
 }
+.album-item{
+  height: 345px;
+}
 
-.artist-item .artist-image{
+.artist-item .artist-image,
+.album-item .album-image{
   height: 245px;
   width: 100%;
   overflow: hidden;
@@ -135,28 +142,53 @@ html ,body {
 
 .artist-item .artist-image img{
   height: 100%;
+  object-fit: cover;
+}
+
+.album-item .album-image img{
   height: 100%;
   object-fit: cover;
 }
 
-.artist-item .artist-name{
+.artist-item .artist-name,
+.album-item .album-name{
   color: white;
   padding: 10px;
   background: #222326;
 }
 
-.artist-item .artist-name a{
+.artist-item .artist-name a,
+.album-item .album-name a{
   color: white;
   text-decoration: none;
 }
 
-#artist-head-card .image{
+#artist-head-card .image,
+#album-head-card .image{
   width: 150px;
   height: 150px;
   overflow: hidden;
   float: left;
   margin-right: 30px;
 }
-#artist-head-card .image img{
+#artist-head-card .image img,
+#album-head-card .image img{
   width: 150px;
+}
+
+#album-head-card p{
+  margin-bottom: 0px;
+  height: 18px;
+}
+
+#album-head-card .btn{
+  margin-top: 20px;
+}
+
+.album-name p {
+  margin-bottom: 0px;
+}
+
+.buttons .btn {
+  margin-right: 10px;
 }

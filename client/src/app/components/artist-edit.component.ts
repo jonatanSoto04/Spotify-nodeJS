@@ -93,19 +93,24 @@ export class ArtistEditComponent implements OnInit {
                         this.errorMessage = ('Error en el servidor');
                     } else {
                         this.errorMessage = ('El artista se ha actualizado correctamente');
-                        
-                        //Subir imagen del artista
-                        this._uploadService.makeFileRequest(this.url+'upload-image-artist/'+id, [], this.filesToUpload, this.token!  ,'image')
-                            .then(
-                                (result) => {
-                                    this._router.navigate(['/artist-list', 1]);
-                                },
-                                (error) => {
-                                    console.log(error);
-                                }
-                            )
-                        //this.artist = response.artist;
-                        //this._router.navigate(['/editar-artista'], response.artist);
+                        if(this.filesToUpload.length === 0){
+                            // redirigir
+                            this._router.navigate(['/artista', response.artist._id]);
+
+                        }else{
+                            //Subir imagen del artista
+                            this._uploadService.makeFileRequest(this.url+'upload-image-artist/'+id, [], this.filesToUpload, this.token!  ,'image')
+                                .then(
+                                    (result) => {
+                                        this._router.navigate(['/artista', response.artist._id]);
+                                    },
+                                    (error) => {
+                                        console.log(error);
+                                    }
+                                )
+                            //this.artist = response.artist;
+                            //this._router.navigate(['/editar-artista'], response.artist);
+                        }
                     }
                     
                 },

@@ -4,24 +4,21 @@ import { NgIf, NgForOf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { UserService } from "../services/user.service";
-import { ArtistService } from "../services/artis.service";
 import { GLOBAL } from "../services/global";
-import { Artist } from '../models/artist';
 import { User } from "../models/user";
 import { AlbumService } from "../services/album.service";
 import { Album } from "../models/album";
 
 @Component({
-    selector: 'artist-detail',
+    selector: 'album-detail',
     standalone: true,
-    templateUrl: '../views/artist-detail.html',
-    imports: [NgIf, NgForOf, FormsModule, HttpClientModule, RouterModule],
-    providers: [UserService, ArtistService, AlbumService]
+    templateUrl: '../views/album-detail.html',
+    imports: [NgIf, FormsModule, HttpClientModule, RouterModule],
+    providers: [UserService, AlbumService]
 })
 
-export class ArtistDetailComponent implements OnInit {
+export class AlbumDetailComponent implements OnInit {
     public identity: User | null = null;
-    public artist: Artist | null = null;
     public album: Album | null = null;
     public albums: Album[] = [];
     public token: string | null = null;
@@ -34,7 +31,6 @@ export class ArtistDetailComponent implements OnInit {
         private _route: ActivatedRoute,
         private _router: Router,
         private _userService: UserService,
-        private _artistService: ArtistService,
         private _albumService: AlbumService
     ) {
         this.identity = this._userService.getIdentity();
@@ -44,24 +40,27 @@ export class ArtistDetailComponent implements OnInit {
 
 
     ngOnInit() {
-        console.log('artist-detail.component.ts cargado');
-        //Llamar al metodo del api para sacar el id getArtist
-        this.getArtist();
+        console.log('album-detail.component.ts cargado');
+        //Llamar al metodo del api para sacar el album
+        this.getAlbum();
     }
     
-    getArtist() {
+    getAlbum() {
+        console.log('getAlbum el metodo funciona');
+        
         this._route.params.forEach((params: Params) => {
             let id = params['id'];
             if (!this.token) {
                 this.errorMessage = 'No se encontró el token de autenticación.';
                 return;
             }
-            this._artistService.getArtist(this.token, id).subscribe(
+            this._albumService.getAlbum(this.token, id).subscribe(
                 (response: any) => {
-                    if (!response.artist) {
+                    if (!response.album) {
                         this._router.navigate(['/']);
                     } else {
-                        this.artist = response.artist;
+                        this.album = response.album;
+                        /*
                         //sacar los album del artista
                         this._albumService.getAlbums(this.token, response.artist._id).subscribe(
                             (response: any) => {
@@ -79,6 +78,7 @@ export class ArtistDetailComponent implements OnInit {
                                     this.errorMessage = 'Error inesperado en la petición.';
                                 }
                             });
+                            */
                     }
                 },
                 error => {
@@ -92,31 +92,4 @@ export class ArtistDetailComponent implements OnInit {
         });
     }
     
-    onDeleteConfirm(id: string) {
-        this.confirmado = id;
-    }
-
-    onCancelAlbum() {
-        this.confirmado = null;
-    }
-
-    onDeleteAlbum(id: string) {
-        this._albumService.deleteAlbum(this.token!, id).subscribe(
-            (response: any) => {
-                if (!response.album) {
-                    alert('Error en el servidor')
-                } else {
-                    this.getArtist();
-                }
-            },
-            error => {
-                console.log(error);
-                if (error.error && error.error.message) {
-                    this.errorMessage = error.error.message;
-                } else {
-                    this.errorMessage = 'Error inesperado en la petición.';
-                }
-            }
-        );
-    }
 }

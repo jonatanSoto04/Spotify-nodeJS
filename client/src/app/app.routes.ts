@@ -11,6 +11,7 @@ import { ArtistDetailComponent } from "./components/artist-detail.component";
 //import album
 import { AlbumAddComponent } from "./components/album-add.component";
 import { AlbumEditComponent } from "./components/album-edit.component";
+import { AlbumDetailComponent } from "./components/album-detail.component";
 
 
 export const routes: Routes = [
@@ -22,6 +23,7 @@ export const routes: Routes = [
   { path: 'artista/:id', component: ArtistDetailComponent },
   { path: 'crear-album/:artist', component: AlbumAddComponent},
   { path: 'edit-album/:id', component: AlbumEditComponent },
+  { path: 'album/:id', component: AlbumDetailComponent },
   { path: '**', component: HomeComponent}
 ];
 
