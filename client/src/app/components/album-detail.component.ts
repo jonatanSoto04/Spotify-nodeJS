@@ -7,20 +7,25 @@ import { UserService } from "../services/user.service";
 import { GLOBAL } from "../services/global";
 import { User } from "../models/user";
 import { AlbumService } from "../services/album.service";
+import { SongService } from "../services/song.service";
 import { Album } from "../models/album";
+import { Song } from "../models/song";
+import { Artist } from "../models/artist";
+import { ArtistService } from "../services/artis.service";
 
 @Component({
     selector: 'album-detail',
     standalone: true,
     templateUrl: '../views/album-detail.html',
-    imports: [NgIf, FormsModule, HttpClientModule, RouterModule],
-    providers: [UserService, AlbumService]
+    imports: [NgIf, NgForOf, FormsModule, HttpClientModule, RouterModule],
+    providers: [UserService, AlbumService, SongService, ArtistService]
 })
 
 export class AlbumDetailComponent implements OnInit {
     public identity: User | null = null;
     public album: Album | null = null;
-    public albums: Album[] = [];
+    public artist: Artist | null = null;
+    public songs: Array<Song> = [];
     public token: string | null = null;
     public url: string;
     public errorMessage: string | null = null;
@@ -31,7 +36,9 @@ export class AlbumDetailComponent implements OnInit {
         private _route: ActivatedRoute,
         private _router: Router,
         private _userService: UserService,
-        private _albumService: AlbumService
+        private _albumService: AlbumService,
+        private _songService: SongService,
+        private _artistService: ArtistService
     ) {
         this.identity = this._userService.getIdentity();
         this.token = this._userService.getToken();
@@ -43,11 +50,10 @@ export class AlbumDetailComponent implements OnInit {
         console.log('album-detail.component.ts cargado');
         //Llamar al metodo del api para sacar el album
         this.getAlbum();
+
     }
-    
+
     getAlbum() {
-        console.log('getAlbum el metodo funciona');
-        
         this._route.params.forEach((params: Params) => {
             let id = params['id'];
             if (!this.token) {
@@ -60,14 +66,26 @@ export class AlbumDetailComponent implements OnInit {
                         this._router.navigate(['/']);
                     } else {
                         this.album = response.album;
-                        /*
-                        //sacar los album del artista
-                        this._albumService.getAlbums(this.token, response.artist._id).subscribe(
+                        this._artistService.getArtist(this.token!, response.album.artist._id).subscribe(
                             (response: any) => {
-                                if (!response.albums) {
-                                    this.errorMessage = 'Este artista no tiene albums'
+                                if (!response.artist) {
+                                    this.errorMessage = 'No existe el artista.';
                                 } else {
-                                    this.albums = response.albums;
+                                    this.artist = response.artist;
+                                }
+                            },
+                            error => {
+                                console.log(error);
+                                this.errorMessage = 'Error al obtener el artista.';
+                            }
+                        );
+                        //sacar los canciones de un album
+                        this._songService.getSongs(this.token, response.album._id).subscribe(
+                            (response: any) => {
+                                if (!response.songs) {
+                                    this.errorMessage = 'Este album no tinene canciones';
+                                } else {
+                                    this.songs = response.songs;
                                 }
                             },
                             error => {
@@ -78,7 +96,6 @@ export class AlbumDetailComponent implements OnInit {
                                     this.errorMessage = 'Error inesperado en la petición.';
                                 }
                             });
-                            */
                     }
                 },
                 error => {
@@ -92,4 +109,31 @@ export class AlbumDetailComponent implements OnInit {
         });
     }
     
+    onDeleteConfirm(id: string) {
+        this.confirmado = id;
+    }
+
+    onCancelSong() {
+        this.confirmado = null;
+    }
+
+    onDeleteSong(id: string) {
+        this._songService.deleteSong(this.token!, id).subscribe(
+            (response: any) => {
+                if (!response.song){
+                    alert('Error en el servidor');
+                } else {
+                    this.getAlbum();
+                }
+            },
+            error => {
+                console.log(error);
+                if (error.error && error.error.message) {
+                    this.errorMessage = error.error.message;
+                } else {
+                    this.errorMessage = 'Error inesperado en la petición.';
+                }
+            }
+        );
+    }
 }

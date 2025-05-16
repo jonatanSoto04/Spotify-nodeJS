@@ -29,7 +29,7 @@ html ,body {
 
 .central{
   padding: 20px;
-  margin-left: 120px;
+  margin-left: 150px;
   background: #eaf5ff;
 }
 .data{
@@ -165,15 +165,15 @@ html ,body {
 
 #artist-head-card .image,
 #album-head-card .image{
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 195px;
   overflow: hidden;
   float: left;
   margin-right: 30px;
 }
 #artist-head-card .image img,
 #album-head-card .image img{
-  width: 150px;
+  width: 195px;
 }
 
 #album-head-card p{
@@ -191,4 +191,65 @@ html ,body {
 
 .buttons .btn {
   margin-right: 10px;
+}
+
+/* Cancones*/
+
+#gallery-songs{
+  margin-top: 30px;
+}
+.songs-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.song-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc; /* Línea separadora entre canciones */
+    transition: background-color 0.3s;
+    width: auto;
+}
+
+.song-item:hover {
+    background-color: #f0f0f0; /* Color de fondo al pasar el mouse */
+}
+
+.song-info {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.song-number {
+    width: 30px; /* Ancho fijo para el número de la canción */
+    text-align: center;
+}
+
+.song-name {
+    flex-grow: 1; /* Toma el espacio restante */
+    margin-left: 10px; /* Espacio entre el número y el nombre */
+}
+
+.song-album{
+  width: 50%;
+}
+
+.song-duration {
+    width: 15%; /* Ancho fijo para la duración */
+    text-align: left; /* Alinear a la derecha */
+}
+
+.song-name .buttons {
+    display: flex;
+    gap: 5px; /* Espacio entre los botones */
+}
+
+.song-name .seguro {
+    margin-top: 0; /* Ajustar la posición de los botones de confirmación */
+    display: flex;
+    gap: 5px; /* Espacio entre los botones de confirmación */
 }

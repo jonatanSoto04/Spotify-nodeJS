@@ -5,26 +5,34 @@
         </div>
         <div class="data">
             <h1>{{album.title}}</h1>
+            <h3>{{artist?.name}}</h3>
             <p>{{album.year}}</p>
-            <p >{{album.description}}</p>
+            <p>{{album.description}}</p>
             <a [routerLink]="['/crear-cancion', album._id]" *ngIf="identity && identity.role == 'ROLE_ADMIN'"
                 class="btn btn-primary">Añadir canción</a>
         </div>
     </div>
-    <!--
     <div class="clearfix"></div>
     <div id="gallery-songs" *ngIf="songs">
         <ul class="songs-list">
             <li *ngFor="let song of songs" class="col-lg-4 song-item">
                 <div class="song-name">
-                    <p>
-                        {{song.number}}. {{song.name}}
-                    </p>
-                    <p>
-                        {{song.duration}}
-                    </p>
-                    <div class="buttons" *ngIf="identity && identity.role == 'ROLE_ADMIN'">
-                        <a [routerLink]="['/edit-song', song._id]" class="btn btn-sm
-                        
+                    <div class="song-info">
+                        <span class="song-number">{{song.number}}</span>
+                        <span class="song-name">{{song.name}}</span>
+                        <span class="song-album">{{album.title}}</span>
+                        <span class="song-duration">{{song.duration}}</span>
+                        <div class="buttons" *ngIf="identity && identity.role == 'ROLE_ADMIN'">
+                            <a [routerLink]="['/edit-song', song._id]" class="btn btn-warning">Editar</a>
+                            <a (click)="onDeleteConfirm(song._id)" class="btn btn-sm btn-danger">Borrar</a>
+                            <div class="seguro" *ngIf="confirmado == song._id">
+                                <a (click)="onDeleteSong(song._id)" class="btn btn-sm btn-danger">Eliminar</a>
+                                <a (click)="onCancelSong()" class="btn btn-sm btn-primary">Cancelar</a>
+                            </div>
+                        </div>
                     </div>
-                    -->
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

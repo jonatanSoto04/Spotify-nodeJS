@@ -13,7 +13,19 @@ export class SongService {
         this.url = GLOBAL.url;
     }
 
-    getSong(token: any, id: number) {
+    getSongs(token: any, albumId= null) {
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': token
+        });
+        if (albumId == null) {
+            return this._http.get(this.url + 'songs', { headers: headers });
+        } else {
+            return this._http.get(this.url + 'songs/' + albumId, { headers: headers });
+        }
+    }
+
+    getSong(token: any, id: string) {
         let headers = new HttpHeaders({
             'Content-Type': 'application/json',
             'Authorization': token
@@ -32,7 +44,7 @@ export class SongService {
         return this._http.post(this.url + 'song', params, { headers: headers });
     }
 
-    editSong(token: any, id: number, song: Song) {
+    editSong(token: any, id: string, song: Song) {
         let params = JSON.stringify(song);
         let headers = new HttpHeaders({
             'Content-Type': 'application/json',
@@ -40,6 +52,15 @@ export class SongService {
         });
 
         return this._http.put(this.url + 'song/' + id, params, { headers: headers });
+    }
+
+    deleteSong(token: any, id: string) {
+        let headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': token
+        });
+
+        return this._http.delete(this.url + 'song/' + id, { headers: headers });
     }
 
 }
