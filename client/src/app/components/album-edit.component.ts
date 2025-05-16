@@ -83,7 +83,7 @@ export class AlbumEditComponent implements OnInit {
                     if (!response.album) {
                         this.errorMessage = ('Error en el servidor');
                     } else {
-                        if (!this.filesToUpload) {
+                        if (this.filesToUpload.length === 0) {
                             // redirigir
                             this._router.navigate(['/artista', response.album.artist]);
                         } else {

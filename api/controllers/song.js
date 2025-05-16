@@ -108,9 +108,9 @@ function uploadfile(req, res){
     const songId = req.params.id;
     const file_name = 'No se cargo la imagen';
     
-    if(req.files){
+    if(req.files && req.files.file){
         const file_path = req.files.file.path;
-        const file_split = file_path.split('\\');
+        const file_split = file_path.split(/[\/\\]/);
         const file_name = file_split[2];
         const ext_split = file_name.split('\.');
         const file_ext = ext_split[1];

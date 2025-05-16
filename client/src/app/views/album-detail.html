@@ -7,12 +7,11 @@
             <h1>{{album.title}}</h1>
             <p>{{album.year}}</p>
             <p >{{album.description}}</p>
-            <a href="" *ngIf="identity && identity.role == 'ROLE_ADMIN'"
+            <a [routerLink]="['/crear-cancion', album._id]" *ngIf="identity && identity.role == 'ROLE_ADMIN'"
                 class="btn btn-primary">Añadir canción</a>
         </div>
     </div>
     <!--
-    [routerLink]="['/crear-cancion', album._id]"
     <div class="clearfix"></div>
     <div id="gallery-songs" *ngIf="songs">
         <ul class="songs-list">
