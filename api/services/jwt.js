@@ -1,7 +1,7 @@
 'use strict'
 const jwt = require('jwt-simple'); //creacion del token
 const moment = require('moment'); //tiempo de duracion de token
-const secret = 'clave_secreta';
+const secret = process.env.JWT_SECRET;
 
 exports.createToken = function(user){
     const payload = {

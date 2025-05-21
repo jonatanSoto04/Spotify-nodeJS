@@ -6,8 +6,8 @@ const md_auth = require('../middlewares/authenticated');
 
 const api = express.Router();
 
-const multipart = require('connect-multiparty');
-const md_upload = multipart({ uploadDir: './uploads/users'});
+const multer = require('multer'); //se Cambia multiparty por multer ya que multiparty tiene vulnerabilidades
+const upload = multer({ dest: './uploads/users' }); // Configure multer
 
 api.get('/probando-controlador',md_auth.ensureAuth, UserController.pruebas);
 api.post('/register', UserController.saveUser);

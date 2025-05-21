@@ -26,6 +26,12 @@ function saveSong(req, res) {
     const song = new Song();
 
     const params = req.body;
+
+    // Validación de entrada
+    if (!params.name || !params.album) {
+        return res.status(400).send({ message: 'Faltan campos obligatorios: nombre y album son requeridos.' });
+    }
+
     song.number = params.number;
     song.name = params.name;
     song.duration = params.duration;
@@ -35,12 +41,13 @@ function saveSong(req, res) {
     song.save()
         .then(songStore => {
             if (!songStore) {
-                res.status(404).send({ message: 'error al guardar imagen' });
+                // si el guardado no es exitoso
+                return res.status(404).send({ message: 'No se pudo guardar la cancion.' });
             }
             res.status(200).send({ song: songStore });
         })
         .catch(err => {
-            res.status().send({ message: 'Error en la peticion' }, err);
+            res.status(500).send({ message: 'Error al guardar la cancion.', error: err.message }); // Sending error message instead of object
         });
 }
 
@@ -61,90 +68,125 @@ function getSongs(req, res) {
             module: 'Artist'
         }
     }).exec()
-    .then(songs => {
-        if(!songs){
-            res.status(404).send({message: 'No se pudo obtener las canciones del album'});
-        }
-        res.status(200).send({songs})
-    })
-    .catch(err => {
-        res.status(500).send({message: 'Error en la peticionde obtener canciones'}, err)
-    });
+        .then(songs => {
+            if (!songs) {
+                res.status(404).send({ message: 'No se pudo obtener las canciones del album' });
+            }
+            res.status(200).send({ songs })
+        })
+        .catch(err => {
+            res.status(500).send({ message: 'Error en la peticionde obtener canciones' }, err)
+        });
 }
 
 //Actualizar cancion
-function updateSong(req, res){
+function updateSong(req, res) {
     const songId = req.params.id;
     const update = req.body;
-    
-    Song.findByIdAndUpdate(songId, update, {new: true})
-    .then(songUpdated => {
-        if(!songUpdated){
-            res.status(404).send({message: 'No se pudo actualizar la cancion'});
-        }
-        res.status(200).send({song: songUpdated});
-    })
-    .catch(err => {
-        res.status(500).send({message: 'Error en la peticion de actualizar cancion'});
-    });
+
+    // valida si se proporcionan parámetros de actualización
+    if (Object.keys(update).length === 0) {
+        return res.status(400).send({ message: 'No se proporcionaron parametros para actualizar.' });
+    }
+
+    Song.findByIdAndUpdate(songId, update, { new: true })
+        .then(songUpdated => {
+            if (!songUpdated) {
+                return res.status(404).send({ message: 'No se pudo actualizar la cancion: cancion no encontrada.' });
+            }
+            res.status(200).send({ song: songUpdated });
+        })
+        .catch(err => {
+            res.status(500).send({ message: 'Error en la peticion de actualizar cancion.', error: err.message }); // Sending error message
+        });
 }
 
-function deleteSong(req, res){
+function deleteSong(req, res) {
     const songId = req.params.id;
     Song.findByIdAndDelete(songId)
-    .then(songRemoved => {
-        if(!songRemoved){
-            res.status(404).send({message: 'Error al eliminar cancion'});
-        }
-        res.status(200).send({song: songRemoved});
-    })
-    .catch(err => {
-        res.status(500).send({message: 'Error en la peticion de eliminar cancion'});
-    })
+        .then(songRemoved => {
+            if (!songRemoved) {
+                res.status(404).send({ message: 'Error al eliminar cancion' });
+            }
+            res.status(200).send({ song: songRemoved });
+        })
+        .catch(err => {
+            res.status(500).send({ message: 'Error en la peticion de eliminar cancion' });
+        })
 }
 
 //cargar archivo sw cancion 
-function uploadfile(req, res){
+async function uploadfile(req, res) {
     const songId = req.params.id;
-    const file_name = 'No se cargo la imagen';
-    
-    if(req.files && req.files.file){
-        const file_path = req.files.file.path;
-        const file_split = file_path.split(/[\/\\]/);
-        const file_name = file_split[2];
-        const ext_split = file_name.split('\.');
-        const file_ext = ext_split[1];
 
-        if(file_ext == 'mp3' || file_ext == 'ogg'){
-            Song.findByIdAndUpdate(songId, {file: file_name})
-            .then(songUpdated => {
-                if (!songUpdated) {
-                    return res.status(404).send({ message: 'No se ha podido actualizar el album' });
+    if (req.file) {
+        const file_path = req.file.path;
+        const file_name = path.basename(file_path);
+        const file_ext = path.extname(file_name).toLowerCase();
+        const file_mime = req.file.mimetype;
+
+        if (file_ext === '.mp3' || file_ext === '.ogg') {
+            if (file_mime === 'audio/mpeg' || file_mime === 'audio/ogg') {
+                try {
+                    const songUpdated = await Song.findByIdAndUpdate(songId, { file: file_name }, { new: true });
+                    if (!songUpdated) {
+                         // Si hay un error al actualizar la canción, elimine el archivo cargado
+                        fs.unlink(file_path, (unlinkErr) => {
+                            if (unlinkErr) {
+                                console.error('Error al eliminar el archivo cargado:', unlinkErr);
+                            }
+                        });
+                        return res.status(404).send({ message: 'No se ha podido actualizar la cancion' });
+                    }
+                    return res.status(200).send({ song: songUpdated });
+                } catch (err) {
+                     // Si hay un error al actualizar la canción, elimine el archivo cargado
+                     fs.unlink(file_path, (unlinkErr) => {
+                         if (unlinkErr) {
+                             console.error('Error al eliminar el archivo cargado:', unlinkErr);
+                         }
+                         return res.status(500).send({ message: 'Error al actualizar la cancion', error: err });
+                     });
                 }
-                return res.status(200).send({ song: songUpdated });
-            })
-            .catch(err => {
-                return res.status(500).send({ message: 'Error error en la peticion de cargar cancion', err });
+            } else {
+                //Eliminar el archivo cargado si el tipo MIME no es válido
+                fs.unlink(file_path, (unlinkErr) => {
+                    if (unlinkErr) {
+                        console.error('Error removing uploaded file:', unlinkErr);
+                    }
+                    res.status(400).send({ message: 'Tipo de archivo no válido. Se requiere un archivo de audio (mp3 u ogg).!' });
+                });
+            }
+        } else {
+            //Eliminar el archivo cargado si la extensión no es válida
+            fs.unlink(file_path, (unlinkErr) => {
+                if (unlinkErr) {
+                    console.error('Error al eliminar el archivo cargado:', unlinkErr);
+                }
+                res.status(400).send({ message: 'Extensión de archivo no válida. Se requiere un archivo de audio (mp3 u ogg).' });
             });
-        }else{
-            res.status(200).send({message: 'Se requiere que la archivo sea tipo "mp3"'});
         }
-    }else{
+    } else {
         return res.status(200).send({ message: 'No has cagado ninguna cancion' });
     }
 }
 
 //Obtener imagen 
-function getSongFile(req, res){
-    const imageFile = req.params.songFile;
-    const path_file = './uploads/songs/'+imageFile;
-    fs.exists(path_file, function(exists){
-        if(exists){
-            res.sendFile(path.resolve(path_file));
-        }else{
-            res.status(200).send({message: 'No existe la cancion...'});
+async function getSongFile(req, res) {
+    const songFile = req.params.songFile;
+    const path_file = path.join(__dirname, '../uploads/songs/', songFile);// Utilice path.join para compatibilidad entre plataformas
+
+    try {
+        await fs.promises.access(path_file, fs.constants.F_OK); //Comprueba si el archivo existe
+        res.sendFile(path.resolve(path_file));
+    } catch (err) {
+        // Si el archivo no existe, devuelve un 404
+        if (err.code === 'ENOENT') {
+            res.status(404).send({ message: 'No existe la cancion...' });
+        } else {
+            res.status(500).send({ message: 'Error al obtener la cancion', error: err });
         }
-    });
+    }
 }
 
 

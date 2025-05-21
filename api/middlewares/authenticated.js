@@ -2,14 +2,15 @@
 
 const jwt = require('jwt-simple');
 const moment = require('moment');
-const secret = 'clave_secreta';
+const secret = process.env.JWT_SECRET; // Leer las variables de entorno
 
 //permite comprobar si el token es correcto
 exports.ensureAuth = function(req, res, next){ 
     if(!req.headers.authorization){
-        return res.status(403).send({message: 'la peticion no tinen la cabecera de autenticacion'})
+        return res.status(403).send({message: 'La peticion no tiene la cabecera de autenticacion'}); // Corrected message
     }
-    const token = req.headers.authorization.replace(/['"]+/g, ''); //remplazar las comillas simples y dobles que pueda traer el string del token por nada
+    const token = req.headers.authorization.replace(/['"]+/g, ''); 
+
     try {
         const payload = jwt.decode(token, secret);
 
@@ -20,7 +21,6 @@ exports.ensureAuth = function(req, res, next){
         next();
     } catch (ex) {
         //console.log(ex);
-        return res.status(404).send({message: 'Token no valido'})
+        return res.status(401).send({message: 'Token inválido'}); // Se cambió el código de estado a 401 y se corrigió el mensaje.
     }
-
 };

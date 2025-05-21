@@ -1,7 +1,7 @@
 'use strict'
 const fs = require('fs');
 const path = require('path');
-const bcrypt = require('bcrypt-nodejs');//enncriptar contraseñas
+const bcrypt = require('bcrypt');//enncriptar contraseñas
 const User = require('../models/user');
 const jwt = require('../services/jwt');
 
@@ -11,7 +11,7 @@ function pruebas(req, res) {
     });
 }
 //registro de un usuario
-function saveUser(req, res) {
+async function saveUser(req, res) {
 
     const user = new User();
     const params = req.body;
@@ -24,64 +24,55 @@ function saveUser(req, res) {
 
     if (params.password) {
         //encriptar contrseña y guardar datos
-        bcrypt.hash(params.password, null, null, function (err, hash) {
+        try {
+            const hash = await bcrypt.hash(params.password, 10); // 10 es el número de rondas de salida
             user.password = hash;
+
             if (user.name != null && user.lastName != null && user.email != null) {
-                //guardar usuario
-                user.save()
-                    .then(userStored => {
-                        if (!userStored) {
-                            return res.status(404).send({ message: 'No se ha registrado el usuario' });
-                        }
-                        return res.status(200).send({ user: userStored });
-                    })
-                    .catch(err => {
-                        return res.status(500).send({ message: 'Error al guardar el usuario' });
-                    });
+                const userStored = await user.save();
+                if (!userStored) {
+                    return res.status(404).send({ message: 'No se ha registrado el usuario' });
+                }
+                return res.status(200).send({ user: userStored });
             } else {
                 res.status(200).send({ message: 'digeleciar todos los campos' });
             }
-        });
-    } else {
-        res.status(500).send({ message: 'Introduce la contraseña' });
+        } catch (err) {
+            return res.status(500).send({ message: 'Error al guardar el usuario', error: err });
+        }
     }
 
 }
 //login de un usuario registrado
-function loginUser(req, res) {
+async function loginUser(req, res) {
     const params = req.body;
 
     const email = params.email;
     const password = params.password;
 
-    User.findOne({ email: email.toLowerCase() })
-        .then(user => {
-            if (!user) {
-                return res.status(404).send({ message: 'El usuario no existe' });
+    try {
+        const user = await User.findOne({ email: email.toLowerCase() });
+        if (!user) {
+            return res.status(404).send({ message: 'El usuario no existe' });
+        }
+
+        const check = await bcrypt.compare(password, user.password);
+
+        if (check) {
+            if (params.gethash) {
+                // devolver token en jwt
+                res.status(200).send({
+                    token: jwt.createToken(user)
+                });
+            } else {
+                res.status(200).send({ user });
             }
-
-            bcrypt.compare(password, user.password, (err, check) => {
-                if (err) {
-                    return res.status(500).send({ message: 'Error al comparar contraseñas' });
-                }
-
-                if (check) {
-                    if (params.gethash) {
-                        // devolver token en jwt
-                        res.status(200).send({
-                            token: jwt.createToken(user)
-                        });
-                    } else {
-                        res.status(200).send({ user });
-                    }
-                } else {
-                    return res.status(404).send({ message: 'El usuario no ha podido loguearse' });
-                }
-            });
-        })
-        .catch(err => {
-            return res.status(500).send({ message: 'Error en la petición', error: err });
-        });
+        } else {
+            return res.status(404).send({ message: 'El usuario no ha podido loguearse' });
+        }
+    } catch (err) {
+        return res.status(500).send({ message: 'Error en la petición', error: err });
+    }
 }
 
 //actuaalizar los datos del usuario
@@ -106,19 +97,18 @@ function updateUser(req, res) {
 }
 
 //cargar imagne del usuario
-function uploadImage(req, res){
+async function uploadImage(req, res) {
     const userId = req.params.id;
-    const file_name = 'No se cargo la imagen';
-    
-    if(req.files){
-        const file_path = req.files.image.path;
-        const file_split = file_path.split('\\');
-        const file_name = file_split[2];
-        const ext_split = file_name.split('\.');
-        const file_ext = ext_split[1];
 
-        if(file_ext == 'png' ||  file_ext == 'jpg' || file_ext == 'gif'){
-            User.findByIdAndUpdate(userId, {image: file_name})
+    if (req.file) { // Verificar si se cargó un archivo
+        const file_path = req.file.path;
+        const file_name = path.basename(file_path);
+        const file_ext = path.extname(file_name).toLowerCase(); // Utilice req.file.mimetype para el tipo MIME
+        const file_mime = req.file.mimetype;
+
+        if (file_ext === '.png' || file_ext === '.jpg' || file_ext === '.gif') {
+             if (file_mime === 'image/png' || file_mime === 'image/jpeg' || file_mime === 'image/gif') {
+                User.findByIdAndUpdate(userId, { image: file_name }, { new: true })
             .then(userUpdated => {
                 if (!userUpdated) {
                     return res.status(404).send({ message: 'No se ha podido actualizar el usuario' });
@@ -126,28 +116,55 @@ function uploadImage(req, res){
                 return res.status(200).send({image: file_name, user: userUpdated });
             })
             .catch(err => {
-                return res.status(500).send({ message: 'Error al actualizar el usuario' });
+                        // Si hay un error al actualizar el usuario, elimine el archivo cargado
+                        fs.unlink(file_path, (unlinkErr) => {
+                            if (unlinkErr) {
+                                console.error('Error removing uploaded file:', unlinkErr);
+                            }
+                            return res.status(500).send({ message: 'Error al actualizar el usuario', error: err });
+                        });
             });
-        }else{
-            res.status(200).send({message: 'Se requiere que la imagen sea tipo "png""jpg" o "gif"'});
+             } else {
+                //Eliminar el archivo cargado si el tipo MIME no es válido
+                fs.unlink(file_path, (unlinkErr) => {
+                    if (unlinkErr) {
+                        console.error('Error removing uploaded file:', unlinkErr);
+                    }
+                    res.status(400).send({ message: 'Tipo de archivo no válido. Se requiere una imagen (png, jpg o gif).' });
+                });
+             }
+        } else {
+            //Eliminar el archivo cargado si la extensión no es válida
+            fs.unlink(file_path, (unlinkErr) => {
+                if (unlinkErr) {
+                    console.error('Error removing uploaded file:', unlinkErr);
+                }
+                res.status(400).send({ message: 'Extensión de archivo no válida. Se requiere una imagen (png, jpg o gif).' });
+            });
         }
 
     }else{
-        return res.status(200).send({ message: 'No has cagado ninguna imagen' });
+        return res.status(400).send({ message: 'No has cargado ninguna imagen' });
     }
 }
 
 //buscar imagen 
-function getImageFile(req, res){
+async function getImageFile(req, res) {
     const imageFile = req.params.imageFile;
-    const path_file = './uploads/users/'+imageFile;
-    fs.exists(path_file, function(exists){
-        if(exists){
-            res.sendFile(path.resolve(path_file));
-        }else{
-            res.status(200).send({message: 'No existe la imagen...'});
+    const path_file = path.join(__dirname, '../uploads/users/', imageFile); // Utilice path.join para compatibilidad entre plataformas
+
+    try {
+        await fs.promises.access(path_file, fs.constants.F_OK); //Comprueba si el archivo existe
+        res.sendFile(path.resolve(path_file));
+    } catch (err) {
+        // Si el archivo no existe, devuelve un 404
+        if (err.code === 'ENOENT') {
+            res.status(404).send({ message: 'No existe la imagen...' });
+        } else {
+            // Manejar otros errores potenciales
+            res.status(500).send({ message: 'Error al obtener la imagen', error: err });
         }
-    });
+    }
 }
 
 module.exports = {

@@ -1,4 +1,7 @@
 'use strict'
+
+require('dotenv').config(); // Cargar variables de entorno desde .env
+
 //se carga las librerias
 const mongoose= require('mongoose');
 const app = require('./app');
@@ -7,13 +10,11 @@ mongoose.Promise = global.Promise;//
 //conexion a bd
 mongoose.connect('mongodb://localhost:27017/spotify_node')
   .then(() => {
-    console.log('Conexión exitosa');
-    app.listen(port, function(){
-        console.log("Servidor del ApiREST de musica escuchando en http://localhost:" + port);
-    });
-  })    
-  .catch((err) => {
-    console.error('Error al conectar a MongoDB:', err);
-  });
-
-
+   console.log('Conexión exitosa');
+   app.listen(port, function(){
+       console.log("Servidor del ApiREST de musica escuchando en http://localhost:" + port);
+   });
+ })
+ .catch((err) => {
+   console.error('Error al conectar a MongoDB:', err);
+ });
