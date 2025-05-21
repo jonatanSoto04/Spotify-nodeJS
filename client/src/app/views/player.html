@@ -1,0 +1,25 @@
+<div class="album-image">
+    <img id="play-album-image" [src]="'assets/image/default.jpg' | safeUrl"/>
+</div>
+<!-- 
+    <span *ngIf="song && song.album">
+    </span>
+        <span *ngIf="!song || !song.album">
+    </span>
+    <img id="play-album-image" src="{{url + 'get-image-album/' + song.album?.image}}"/>
+    <div class="audio-file">
+        <p>Reproduciendo</p>
+        <span id="play-title-song">
+            {{song.name}}
+        </span>
+        |
+        <span id="play-artist-song">
+            {{song.album? song.album.artist.name: ''}}
+        </span>
+        <audio controls id="player">
+            <source id="mp3-source" src="{{ url + 'get-file-song/' + song.file }}" *ngIf="song.file" />
+            <source id="mp3-source" src="#" *ngIf="!song.file"/>
+            Tipo de archivo no soportado
+        </audio>
+    </div>
+    -->
